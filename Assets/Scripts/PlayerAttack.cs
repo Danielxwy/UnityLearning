@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerAttack : MonoBehaviour
 {
-    private int playerDamage;
+    private float playerDamage;
     
     void Start()
     {

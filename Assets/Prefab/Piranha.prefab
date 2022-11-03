@@ -305,7 +305,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1959999371
-  m_SortingLayer: 2
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 86afbf04432b34e1883a20f99f007881, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -330,14 +330,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5dead919c95739f4984aa9ad0778cb8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackCD: 1.4
   bloodFX: {fileID: 6060441001234361142, guid: 680e25d8f46e28a4a9e09cbc6c78f5c6, type: 3}
-  health: 100
   damage: 5
-  speed: 0
-  reactRadius: 2.4
   flashTime: 0.1
   anim: {fileID: 570322871981315899}
+  rb: {fileID: 570322871981315896}
+  render: {fileID: 570322871981315903}
+  attackCD: 1.4
+  health: 100
+  speed: 0
+  reactRadius: 2.4
   playerMask:
     serializedVersion: 2
     m_Bits: 512

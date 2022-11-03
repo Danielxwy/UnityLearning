@@ -7,11 +7,10 @@ public class EnemyPiranha : Enemy
 
 
     
-    new protected void Start()
+    protected void Start()
     {
         leftx = left.position.x;
         rightx = right.position.x;
-        base.Start();  //运行父类Start
     }
 
     new protected void Update()
@@ -22,7 +21,7 @@ public class EnemyPiranha : Enemy
         if (attackTimer <= 0)     
         {
             Attack();
-            isAttack = false;
+            isAttacking = false;
             attackTimer = attackCD;        //重新赋值
         }
         base.Update();  //运行父类Update
@@ -32,16 +31,16 @@ public class EnemyPiranha : Enemy
     {
         if(playerIn)
         {
-            if (playerx > transform.position.x && !isAttack)//Player在右且未攻击
+            if (playerx > transform.position.x && !isAttacking)//Player在右且未攻击
             {TurnRight();}
-            else if (playerx < transform.position.x && !isAttack)//Player在左且未攻击
+            else if (playerx < transform.position.x && !isAttacking)//Player在左且未攻击
             { TurnLeft();}
-            if(!isAttack)
+            if(!isAttacking)
             {
-                isAttack = true;
+                isAttacking = true;
                 anim.SetBool("attacking", false);
             }
-            else if(isAttack)
+            else if(isAttacking)
             {
                 attackTimer -= Time.deltaTime;
             }
@@ -50,7 +49,7 @@ public class EnemyPiranha : Enemy
         {
             anim.SetBool("attacking", false);
             attackTimer = attackCD;             //持续赋值
-            isAttack = false;
+            isAttacking = false;
         }
     }
 

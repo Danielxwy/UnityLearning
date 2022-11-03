@@ -10,10 +10,4 @@ public class BloodFX : MonoBehaviour
     {
         Destroy(gameObject, timeToDestroy);
     }
-
-    void Update()
-    {
-        
-    }
-
 }

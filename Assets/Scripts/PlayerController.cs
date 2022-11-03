@@ -3,23 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : Unit
 {
-    public GameObject bloodFX;
-
-    [Header("PlayerUI")]//
-    public Image dashIcon;//冲刺CD条
-    public Image healthBar;
-    public Image healthBar2;
-
     [Header("速度补偿")]
     public float attackSpeed;
     public float hurtSpeed;
 
     [Header("人物参数")]
-    public int health;
-    public int currentHealth;
-    public int damage;
     public float speed;
     public float jumpForce;
     public float hangingJumpForce;//悬挂时跳跃的力
@@ -43,28 +33,33 @@ public class PlayerController : MonoBehaviour
     public float grabDistance = 0.2f;//悬挂需离墙的距离
     public float topRaycast = 0.7f;//头部往前一点向下的射线，检测头顶无障碍
 
-    public Transform groundCheck;
+    //public Transform groundCheck;
     public LayerMask layer;
     public LayerMask oneWay;
 
-    [SerializeField]
-    private bool isGround, isDashing, isAttacking,
-                 isHit, jumpPressed, isHanging;
-
-    private Rigidbody2D rb;
-    private Animator anim;
     private BoxCollider2D coll;
-    private float HPLerp = 3.0f;
     private bool canDown;
     private bool isOnOneWay;
 
     Vector2 dir;
+
+    public float CurrentHealth { get => currentHealth; 
+        set
+        {
+            currentHealth = value;
+            if (currentHealth <= 0)
+            {
+                anim.SetTrigger("dead");
+                GameController.isGameOver = true;
+                rb.velocity = Vector2.zero;
+            }
+        }
+    }
+
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
-        anim = GetComponent<Animator>();
         coll = GetComponent<BoxCollider2D>();
-        currentHealth = health;
+        CurrentHealth = maxHealth;
     }
 
     void Update()
@@ -106,14 +101,11 @@ public class PlayerController : MonoBehaviour
             {
                 rb.velocity = new Vector2(dir.x * hurtSpeed, rb.velocity.y);
             }
-
-            dashIcon.fillAmount -= 1.0f / dashCD * Time.deltaTime;//DashIcon冷却
         }
         if(Input.GetKey(KeyCode.S) && Input.GetButton("Jump"))
         {
             canDown = true;
         }
-        HPBarFill();
         OneWayPlatformCheck();
     }
 
@@ -123,12 +115,6 @@ public class PlayerController : MonoBehaviour
         {
             Dash();
         }
-    }
-
-    private void HPBarFill()
-    {
-        healthBar.fillAmount = Mathf.Lerp(healthBar.fillAmount, (float)currentHealth / (float)health, HPLerp * Time.deltaTime); //HPBarCal
-        healthBar2.fillAmount = (float)currentHealth / (float)health;
     }
 
     void Hang()
@@ -214,6 +200,7 @@ public class PlayerController : MonoBehaviour
         }
         
     }//单向平台效果（更改Layer
+
     IEnumerator OneWayBack(float time)//协程更改玩家越下单向平台后的Layer
     {
         yield return new WaitForSeconds(time);
@@ -221,27 +208,15 @@ public class PlayerController : MonoBehaviour
         gameObject.layer = LayerMask.NameToLayer("Player");
     }
 
-    public void GetDamage(int enemyDamage,Vector2 direction)//受伤（用来外部调用
+    public void GetDamage(float damage,Vector2 direction)//受伤（用来外部调用
     {
         isHit = true;
         dir = -direction;
-        currentHealth -= enemyDamage;
-
-        if (currentHealth <= 0)
-        {
-            anim.SetTrigger("die");
-            GameController.isGameOver = true;
-            rb.velocity = new Vector2(0, 0);
-        }
-
+        CurrentHealth -= damage;
         ScreenFlash.instance.Flash();//屏幕闪烁
-
         CameraShake.instance.Shake();//屏幕震动
-
-        Flash(0.1f);//人物闪烁
-
+        Flash(flashTime);//人物闪烁
         anim.SetTrigger("hurting");
-
         Instantiate(bloodFX, transform.position, Quaternion.identity);  //BloodFXIns
     }
 
@@ -282,10 +257,6 @@ public class PlayerController : MonoBehaviour
             rb.gravityScale = 5;
         }
     }
-    void AttackOver()     //动画帧事件
-    {
-        isAttacking = false;
-    }
 
     void Move()
     {
@@ -293,6 +264,7 @@ public class PlayerController : MonoBehaviour
             return;
 
         float horizontal = Input.GetAxisRaw("Horizontal");
+
         if (!anim.GetCurrentAnimatorStateInfo(1).IsName("Attack") && !anim.GetCurrentAnimatorStateInfo(1).IsName("Attack2") && !anim.GetCurrentAnimatorStateInfo(1).IsName("Attack3"))
         {
             rb.velocity = new Vector2(horizontal * speed * Time.fixedDeltaTime, rb.velocity.y);  //攻击动画播放完后才能移动
@@ -305,6 +277,7 @@ public class PlayerController : MonoBehaviour
         {
             anim.SetBool("idle", false);
             anim.SetInteger("running", 1);
+            //AudioManager.instance.PlayAudioClip(index);
         }
         if (horizontal != 0 && !anim.GetCurrentAnimatorStateInfo(1).IsName("Attack") && !anim.GetCurrentAnimatorStateInfo(1).IsName("Attack2") && !anim.GetCurrentAnimatorStateInfo(1).IsName("Attack3"))
         {
@@ -331,6 +304,7 @@ public class PlayerController : MonoBehaviour
                 anim.SetBool("hanging", false);
             }
         }
+
         if (isGround)
         {
             jumpCount = 1;                  //可修改跳跃次数（多段跳）
@@ -347,20 +321,15 @@ public class PlayerController : MonoBehaviour
         {
             jumpCount = 0;
         }
-
         //若多段跳，增加判断即可
-
     }
 
     void ReadyToDash()
     {
         isDashing = true;
-
         dashTimeLeft = dashTime;
-
         lastDashTime = Time.time;
-
-        dashIcon.fillAmount = 1;
+        UIManager.instance.InitEnergyBar();
     }
 
     void Dash()
@@ -402,30 +371,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    protected void Flash(float time)
-    {
-        GetComponent<SpriteRenderer>().color = Color.red;
-        Invoke("FlashBack", time);
-    }
 
-    protected void FlashBack()
-    {
-        GetComponent<SpriteRenderer>().color = Color.white;
-    }
-
-
-    #region 动画事件函数
-    void Destroy()   
-    {
-        Destroy(gameObject);
-        Time.timeScale = 0.5f;
-    }
-
-    void IsHitFalse() 
-    {
-        isHit = false;
-    }
-    #endregion
 
 
 

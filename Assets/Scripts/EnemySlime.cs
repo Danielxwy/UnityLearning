@@ -4,13 +4,6 @@ using UnityEngine;
 
 public class EnemySlime : Enemy
 {
-
-    new protected void Start()
-    {
-
-        base.Start();  //‘À––∏∏¿‡Start
-    }
-
     new protected void Update()
     {
         playerIn = Physics2D.OverlapCircle(transform.position, reactRadius, playerMask);
