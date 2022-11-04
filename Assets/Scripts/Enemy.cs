@@ -53,7 +53,7 @@ public abstract class Enemy : Unit
         Flash(flashTime);
         Instantiate(bloodFX, transform.position, Quaternion.identity);//BloodFX
         anim.SetTrigger("hurting");
-        CameraShake.instance.Shake();//屏幕震动                                    **************改重攻击震动
+        Tools.Instance.CameraShake();//屏幕震动               **************改重攻击震动
         StartCoroutine(FrameCut(0.1f));//受击反馈（抽帧
     }
 

@@ -47,7 +47,7 @@ public class PlayerShadow : MonoBehaviour
 
         if(Time.time >= (activeStart + activeTime))
         {
-            ObjectPool.instance.ReturnPool(this.gameObject);//返回对象池
+            ObjectPool.Instance.ReturnPool(this.gameObject);//返回对象池
         }
     }
 }

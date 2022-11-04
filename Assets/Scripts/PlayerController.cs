@@ -50,7 +50,7 @@ public class PlayerController : Unit
             if (currentHealth <= 0)
             {
                 anim.SetTrigger("dead");
-                GameController.isGameOver = true;
+                GameManager.isGameOver = true;
                 rb.velocity = Vector2.zero;
             }
         }
@@ -64,7 +64,7 @@ public class PlayerController : Unit
 
     void Update()
     {
-        if (!GameController.isGameOver)
+        if (!GameManager.isGameOver)
         {
             Anim();
             Hang();
@@ -82,13 +82,11 @@ public class PlayerController : Unit
                 Attack();
             }
 
-            if (Input.GetButtonDown("Dash") && !isHit && !isAttacking && !isHanging)
+            if (Input.GetButtonDown("Dash"))
             {
                 if (Time.time >= (lastDashTime + dashCD))//判断是否正在CD
                 {
                     ReadyToDash();//准备Dash
-                    anim.SetTrigger("dashing");
-                    CameraShake.instance.Shake();//屏幕震动
                 }
             }
 
@@ -111,7 +109,7 @@ public class PlayerController : Unit
 
     void FixedUpdate()
     {
-        if (!GameController.isGameOver)
+        if (!GameManager.isGameOver)
         {
             Dash();
         }
@@ -214,7 +212,7 @@ public class PlayerController : Unit
         dir = -direction;
         CurrentHealth -= damage;
         ScreenFlash.instance.Flash();//屏幕闪烁
-        CameraShake.instance.Shake();//屏幕震动
+        Tools.Instance.CameraShake();//屏幕震动
         Flash(flashTime);//人物闪烁
         anim.SetTrigger("hurting");
         Instantiate(bloodFX, transform.position, Quaternion.identity);  //BloodFXIns
@@ -326,10 +324,15 @@ public class PlayerController : Unit
 
     void ReadyToDash()
     {
+        if (isHit || isAttacking || isHanging)
+            return;
+        anim.SetTrigger("dashing");
+        Tools.Instance.CameraShake();//屏幕震动
+
         isDashing = true;
         dashTimeLeft = dashTime;
         lastDashTime = Time.time;
-        UIManager.instance.InitEnergyBar();
+        UIManager.Instance.InitEnergyBar();
     }
 
     void Dash()
@@ -342,7 +345,7 @@ public class PlayerController : Unit
 
                 dashTimeLeft -= Time.deltaTime;
 
-                ObjectPool.instance.GetFromPool();
+                ObjectPool.Instance.GetFromPool();
             }
             if(dashTimeLeft <= 0)
             {

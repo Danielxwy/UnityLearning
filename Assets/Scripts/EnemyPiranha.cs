@@ -4,9 +4,6 @@ using UnityEngine;
 
 public class EnemyPiranha : Enemy
 {
-
-
-    
     protected void Start()
     {
         leftx = left.position.x;
@@ -29,29 +26,27 @@ public class EnemyPiranha : Enemy
 
     void Anim()
     {
-        if(playerIn)
+        if (playerIn)
         {
             if (playerx > transform.position.x && !isAttacking)//Player在右且未攻击
-            {TurnRight();}
+            { TurnRight(); }
             else if (playerx < transform.position.x && !isAttacking)//Player在左且未攻击
-            { TurnLeft();}
-            if(!isAttacking)
+            { TurnLeft(); }
+            if (!isAttacking)
             {
                 isAttacking = true;
                 anim.SetBool("attacking", false);
             }
-            else if(isAttacking)
+            else if (isAttacking)
             {
                 attackTimer -= Time.deltaTime;
             }
         }
-        else if(!playerIn)
+        else if (!playerIn)
         {
             anim.SetBool("attacking", false);
             attackTimer = attackCD;             //持续赋值
             isAttacking = false;
         }
     }
-
-
 }

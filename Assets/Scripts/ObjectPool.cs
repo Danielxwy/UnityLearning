@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
 
-public class ObjectPool : MonoBehaviour
+public class ObjectPool : MonoSingleton<ObjectPool>
 {
-    public static ObjectPool instance;
-
     public GameObject shadowPrefab;
 
     public int shadowCount;
@@ -18,10 +16,6 @@ public class ObjectPool : MonoBehaviour
 
     private void Awake()
     {
-        if(instance == null)
-        {
-            instance = this;
-        }
         FillPool();//初始化对象池
     }
     

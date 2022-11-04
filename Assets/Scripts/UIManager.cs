@@ -4,23 +4,13 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIManager : MonoBehaviour
+public class UIManager : MonoSingleton<UIManager>
 {
-    public static UIManager instance;
-
     public PlayerController player;
     public Image healthBarUp;
     public Image healthBarDown;
     public Image energyBar;
     public float hpBarLerp = 3.0f;
-
-    private void Awake()
-    {
-        if(instance == null)
-        {
-            instance = this;
-        }
-    }
 
     private void Update()
     {

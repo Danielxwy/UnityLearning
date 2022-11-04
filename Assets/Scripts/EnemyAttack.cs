@@ -4,12 +4,7 @@ using UnityEngine;
 
 public class EnemyAttack : MonoBehaviour
 {
-    private float enemyDamage;
-
-    void Start()
-    {
-        enemyDamage = GetComponentInParent<Enemy>().damage;
-    }
+    public Unit enemy;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -17,10 +12,10 @@ public class EnemyAttack : MonoBehaviour
         {
             if (transform.parent.localScale.x > 0)
             {
-                collision.GetComponent<PlayerController>().GetDamage(enemyDamage, Vector2.right);
+                collision.GetComponent<PlayerController>().GetDamage(enemy.damage, Vector2.right);
             }else if (transform.parent.localScale.x < 0)
             {
-                collision.GetComponent<PlayerController>().GetDamage(enemyDamage, Vector2.left);
+                collision.GetComponent<PlayerController>().GetDamage(enemy.damage, Vector2.left);
             }
         }
     }

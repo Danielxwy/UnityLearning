@@ -195,6 +195,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b32f9cb4197fcec4db289542a5795552, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemy: {fileID: 570322871981315897}
 --- !u!1 &7535054559856921616
 GameObject:
   m_ObjectHideFlags: 0
@@ -333,6 +334,8 @@ MonoBehaviour:
   bloodFX: {fileID: 6060441001234361142, guid: 680e25d8f46e28a4a9e09cbc6c78f5c6, type: 3}
   damage: 5
   flashTime: 0.1
+  maxHealth: 0
+  currentHealth: 0
   anim: {fileID: 570322871981315899}
   rb: {fileID: 570322871981315896}
   render: {fileID: 570322871981315903}

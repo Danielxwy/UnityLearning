@@ -4,23 +4,19 @@ using UnityEngine;
 
 public class PlayerAttack : MonoBehaviour
 {
-    private float playerDamage;
-    
-    void Start()
-    {
-        playerDamage = GetComponentInParent<PlayerController>().damage;
-    }
+    public Unit player;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.gameObject.CompareTag("Enemy"))
         {
+            print(player.damage);
             if (transform.parent.localScale.x > 0)
             {
-                collision.GetComponent<Enemy>().GetDamage(playerDamage,Vector2.right);
+                collision.GetComponent<Enemy>().GetDamage(player.damage, Vector2.right);
             }else if(transform.parent.localScale.x < 0)
             {
-                collision.GetComponent<Enemy>().GetDamage(playerDamage, Vector2.left);
+                collision.GetComponent<Enemy>().GetDamage(player.damage, Vector2.left);
             }  
         }
     }
